@@ -39,7 +39,6 @@ RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then \
 
 RUN apt-get update \
     && apt-get -y install --no-install-recommends \
-    #&& apt-get -y install \
     clang \
     clangd \
     clang-format \
@@ -47,7 +46,6 @@ RUN apt-get update \
     cmake \
     ninja-build \
     valgrind \
-    #
     # OpenMP support for clang
     libomp-dev \
     # OpenMPI support
@@ -71,18 +69,9 @@ ENV CC="/usr/bin/clang" \
     COV="/usr/bin/llvm-cov" \
     LLDB="/usr/bin/lldb"
 
-# Copy the parent folder which contains C++ source code to the Docker image under /usr/src/
-COPY . /usr/src/fha-parallelprogrammierung/
-
-# Specify the working directory
-WORKDIR /usr/src/fha-parallelprogrammierung/
-
 #RUN export OMP_NUM_THREADS=5
 
 # Use clang to compile the hello_world.c source file
-RUN clang -o hello_world -fopenmp=libomp hello_world.c
+#RUN clang -o hello_world -fopenmp=libomp hello_world.c
 
 ENTRYPOINT ["/bin/bash"]
-
-# Run the output program from the previous step
-CMD ["./hello_world"]
