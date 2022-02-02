@@ -20,7 +20,7 @@ RUN apt-get update \
     #
     # base tools
     && apt-get -y install git procps lsb-release wget build-essential 
-    
+
 # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
@@ -52,12 +52,12 @@ RUN apt-get update \
     libomp-dev \
     # OpenMPI support
     libopenmpi-dev
-    #&& ln -s /usr/bin/clang-tidy /usr/bin/clang-tidy \
-    #&& ln -s /usr/bin/lldb /usr/bin/lldb \
-    #&& ln -sf /usr/bin/lldb-server /usr/lib/llvm-10/bin/lldb-server.0.1 \
-    # Fixes clangd
-    #&& ln -sf /usr/lib/llvm/include/c++/v1 /usr/include/c++/v1 \
-    #&& ln -sf /usr/lib/llvm/include/ /usr/include/
+#&& ln -s /usr/bin/clang-tidy /usr/bin/clang-tidy \
+#&& ln -s /usr/bin/lldb /usr/bin/lldb \
+#&& ln -sf /usr/bin/lldb-server /usr/lib/llvm-10/bin/lldb-server.0.1 \
+# Fixes clangd
+#&& ln -sf /usr/lib/llvm/include/c++/v1 /usr/include/c++/v1 \
+#&& ln -sf /usr/lib/llvm/include/ /usr/include/
 
 RUN for c in $(ls /usr/bin/clang*); do link=$(echo $c | sed "s///"); ln -sf $c $link; done && \
     update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100 && \
@@ -71,18 +71,8 @@ ENV CC="/usr/bin/clang" \
     COV="/usr/bin/llvm-cov" \
     LLDB="/usr/bin/lldb"
 
-# Copy the parent folder which contains C++ source code to the Docker image under /usr/src/
-COPY . /usr/src/fha-parallelprogrammierung/
-
-# Specify the working directory
-WORKDIR /usr/src/fha-parallelprogrammierung/
-
-#RUN export OMP_NUM_THREADS=5
-
-# Use clang to compile the hello_world.c source file
-RUN clang -o hello_world -fopenmp=libomp hello_world.c
+# new!
+ARG OMPI_ALLOW_RUN_AS_ROOT=1
+ARG OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
 ENTRYPOINT ["/bin/bash"]
-
-# Run the output program from the previous step
-CMD ["./hello_world"]

@@ -1,0 +1,19 @@
+PROG=PrimeOpenMP
+
+debug:
+	sunCC -g -library=stlport4 -xopenmp=noopt ${PROG}.c -o ${PROG}.exe
+
+release:
+	sunCC -g -library=stlport4 -xopenmp -fast ${PROG}.c -o ${PROG}.exe
+
+run go: {PROG}.exe
+	OMP_DYNAMIC=false ./${PROG}.exe 0 10000000
+
+clean:
+	rm -rf *.er *~ ${PROG}.exe ${PROG}.o
+
+check:
+	sunCC -g -library=stlport4 -xopenmp=noopt -xinstrument=datarace ${PROG}.c -o ${PROG}.exe
+	OMP_DYNAMIC=false OMP_NUM_THREADS=2 collect -r on ./$(PROG).exe 0 1000
+
+{PROG}.exe: debug

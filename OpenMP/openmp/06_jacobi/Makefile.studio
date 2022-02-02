@@ -1,0 +1,20 @@
+PROG=jacobi
+MPI_PROCS=1
+
+debug:
+	sunCC -g -library=stlport4 -xopenmp=noopt -I/usr/lib/mpi/gcc/openmpi/include/ ${PROG}.c -o ${PROG}.exe -lm -L/usr/lib/mpi/gcc/openmpi/lib/ -lmpi
+
+release:
+	sunCC -g -library=stlport4 -xopenmp -fast -I/usr/lib/mpi/gcc/openmpi/include/ ${PROG}.c -o ${PROG}.exe -lm -L/usr/lib/mpi/gcc/openmpi/lib/ -lmpi
+
+run go: ${PROG}.exe
+	OMP_DYNAMIC=false mpiexec -n $(MPI_PROCS) ./${PROG}.exe < input
+
+clean:
+	rm -rf *.er *~ ${PROG}.exe ${PROG}.o
+
+check:
+	sunCC -g -library=stlport4 -xopenmp=noopt -xinstrument=datarace ${PROG}.c -o ${PROG}.exe -lm
+	OMP_DYNAMIC=false OMP_NUM_THREADS=2 collect -r on ./$(PROG).exe < input
+
+${PROG}.exe: debug

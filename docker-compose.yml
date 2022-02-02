@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+  latex:
+    container_name: parallelprogrammierung
+    image: pblan/fha-parallelprogrammierung
+    volumes:
+      - .:/mnt/fha-parallelprogrammierung/
+    tty: true
+    restart: always
