@@ -1,0 +1,46 @@
+ `plot` is the primary command for drawing plots with `gnuplot`.  It creates
+ plots of functions and data in many, many ways.  `plot` is used to draw 2-d
+ functions and data; `splot` draws 2-d projections of 3-d surfaces and data.
+ `plot` and `splot` contain many common features; see `splot` for differences.
+ Note specifically that although the `binary <binary list>` variation does
+ work for both `plot` and `splot`, there are small differences between these
+ modes.  Furthermore, `plot`'s `axes` option does not exist for `splot`.
+
+ Syntax:
+       plot {<ranges>}
+            {<function> | {"<datafile>" {datafile-modifiers}}}
+            {axes <axes>} {<title-spec>} {with <style>}
+            {, {definitions,} <function> ...}
+
+ where either a <function> or the name of a data file enclosed in quotes is
+ supplied.  A function is a mathematical expression or a pair of mathematical
+ expressions in parametric mode.  The expressions may be defined completely or
+ in part earlier in the stream of `gnuplot` commands (see `user-defined`).
+
+ It is also possible to define functions and parameters on the `plot` command
+ itself.  This is done merely by isolating them from other items with commas.
+
+ There are four possible sets of axes available; the keyword <axes> is used to
+ select the axes for which a particular line should be scaled.  `x1y1` refers
+ to the axes on the bottom and left; `x2y2` to those on the top and right;
+ `x1y2` to those on the bottom and right; and `x2y1` to those on the top and
+ left.  Ranges specified on the `plot` command apply only to the first set of
+ axes (bottom left).
+
+ Examples:
+       plot sin(x)
+       plot f(x) = sin(x*a), a = .2, f(x), a = .4, f(x)
+       plot [t=1:10] [-pi:pi*2] tan(t), \
+            "data.1" using (tan($2)):($3/$4) smooth csplines \
+                     axes x1y2 notitle with lines 5
+
+ See also `show plot`.
+
+Subtopics available for plot:
+    acsplines         errorlines        parametric        thru              
+    bezier            every             ranges            title             
+    binary            example           sbezier           unique            
+    csplines          frequency         smooth            using             
+    datafile          index             special-filenames with              
+    errorbars         matrix            style             
+
